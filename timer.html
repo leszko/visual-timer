@@ -16,6 +16,11 @@ style="background-color:#28c1bb">
 <script type="text/javascript" src="rgbcolor.js"></script>
 
 <script>
+var	blue = "#28c1bb";
+var white = "#ffffff";
+var orange = "#E89E0C";
+var red = "#FF0000";
+
 resizeFullScreen();
 
 var fullCircle = 1;
@@ -28,16 +33,13 @@ radius = halfSize * 0.90;
 var startTime =  new Date().getTime() / 1000;
 var limitInSeconds = 10;
 
+var previousColor = new RgbColor(white);
+var color = new RgbColor(white);
+
 var angle = 0.1
 restart();
 
-var	blue = "#28c1bb";
-var white = "#ffffff";
-var orange = "#E89E0C";
-var red = "#FF0000";
 
-var previousColor = white;
-var color = white;
 
 var gradientLastChange = 0.0;
 
@@ -51,8 +53,8 @@ function restart() {
 }
 
 function clearCanvas() {
-	previousColor = white;
-	color = white;
+	previousColor = new RgbColor(white);
+	color = new RgbColor(white);
 	context.translate(-halfSize, -halfSize);
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	context.translate(halfSize, halfSize);
@@ -77,16 +79,13 @@ function drawProgress() {
 	color = applyGradient(previousColor, toColor(progress), elapsedSeconds);
 
 
-	drawCircle(radius, progress, color);
-
-	c = new RgbColor("#123456");
-	document.getElementById("demo").innerHTML = c.toString();
+	drawCircle(radius, progress, color.toString());
 
 	document.getElementById("demo").innerHTML = elapsedSeconds.toFixed(1);
 }
 
 function applyGradient(previousColor, currentColor, elapsedSeconds) {
-	if (previousColor == currentColor) {
+	if (previousColor.equals(currentColor)) {
 		return previousColor;
 	}
 	if (elapsedSeconds - gradientLastChange < 0.001) {
@@ -95,12 +94,7 @@ function applyGradient(previousColor, currentColor, elapsedSeconds) {
 
 	gradientLastChange = elapsedSeconds;
 
-	var previousRgb = new RgbColor(previousColor);
-	var currentRgb = new RgbColor(currentColor);
-
-	previousRgb.applyGradientFrom(currentRgb);
-
-	return previousRgb.toString();
+	return previousColor.gradientFrom(currentColor);
 }
 
 function debug(text) {
@@ -109,12 +103,12 @@ function debug(text) {
 
 function toColor(progress) {
 	if (progress < 0.5) {
-		return white;
+		return new RgbColor(white);
 	}
 	if (progress < 0.8) {
-		return orange;
+		return new RgbColor(orange);
 	}
-	return red;
+	return new RgbColor(red);
 }
 
 function drawCircle(radius, progress, color) {
