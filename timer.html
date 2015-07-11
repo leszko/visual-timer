@@ -14,117 +14,18 @@ style="background-color:#28c1bb">
 </canvas>
 
 <script type="text/javascript" src="rgbcolor.js"></script>
+<script type="text/javascript" src="timer.js"></script>
 
 <script>
-var	blue = "#28c1bb";
-var white = "#ffffff";
-var orange = "#E89E0C";
-var red = "#FF0000";
 
 resizeFullScreen();
-
-var fullCircle = 1;
-
-var canvas = document.getElementById("canvas");
-var context = canvas.getContext("2d");
-var halfSize = canvas.height / 2;
-context.translate(halfSize, halfSize);
-radius = halfSize * 0.90;
-var startTime =  new Date().getTime() / 1000;
-var limitInSeconds = 10;
-
-var previousColor = new RgbColor(white);
-var color = new RgbColor(white);
-
-var angle = 0.1
+var timer = new Timer(document.getElementById("canvas"));
 restart();
 
 
-
-var gradientLastChange = 0.0;
-
 function restart() {
-	clearCanvas();
-
-	startTime =  new Date().getTime() / 1000;
-	gradientLastChange = 0.0;
-	limitInSeconds = document.getElementById("minutes").value * 60;
-	window.requestAnimationFrame(drawClock);
-}
-
-function clearCanvas() {
-	previousColor = new RgbColor(white);
-	color = new RgbColor(white);
-	context.translate(-halfSize, -halfSize);
-	context.clearRect(0, 0, canvas.width, canvas.height);
-	context.translate(halfSize, halfSize);
-}
-
-function drawClock() {
-	drawProgress();
-
-	refresh();
-}
-
-function refresh() {
-	window.requestAnimationFrame(drawClock);
-}
-
-function drawProgress() {
-	var currentTime = new Date().getTime() / 1000;
-	var elapsedSeconds = (currentTime - startTime);
-	var progress = elapsedSeconds / limitInSeconds;
-
-	previousColor = color;
-	color = applyGradient(previousColor, toColor(progress), elapsedSeconds);
-
-
-	drawCircle(radius, progress, color.toString());
-
-	document.getElementById("demo").innerHTML = elapsedSeconds.toFixed(1);
-}
-
-function applyGradient(previousColor, currentColor, elapsedSeconds) {
-	if (previousColor.equals(currentColor)) {
-		return previousColor;
-	}
-	if (elapsedSeconds - gradientLastChange < 0.001) {
-		return previousColor;
-	}
-
-	gradientLastChange = elapsedSeconds;
-
-	return previousColor.gradientFrom(currentColor);
-}
-
-function debug(text) {
-	document.getElementById("demo").innerHTML = text;
-}
-
-function toColor(progress) {
-	if (progress < 0.5) {
-		return new RgbColor(white);
-	}
-	if (progress < 0.8) {
-		return new RgbColor(orange);
-	}
-	return new RgbColor(red);
-}
-
-function drawCircle(radius, progress, color) {
-	context.lineWidth = 1;
-	context.fillStyle = color;
-	context.strokeStyle = color;
-	context.beginPath();
-    context.moveTo(0,0);
-	context.arc(0, 0, radius, -0.5 * Math.PI, toAngle(progress));
-	context.stroke();
-	context.fill();
-	context.closePath();
-}
-
-function toAngle(progress) {
-	return (2 * progress - 0.5) * Math.PI;
+	periodInSeconds = document.getElementById("minutes").value * 60;
+	timer.start(periodInSeconds);
 }
 
 function resizeFullScreen() {

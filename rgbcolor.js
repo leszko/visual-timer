@@ -29,7 +29,7 @@ RgbColor.prototype.toString = function() {
 	return "#" + toHex(this.red) + toHex(this.green) + toHex(this.blue); 
 }
 
-RgbColor.prototype.gradientFrom = function(rgbColor) {
+RgbColor.prototype.gradientTowards = function(rgbColor) {
 	var result = this.clone();
 
 	if (result.red < rgbColor.red) {
@@ -49,7 +49,7 @@ RgbColor.prototype.gradientFrom = function(rgbColor) {
 	} else if (result.blue > rgbColor.blue) {
 		result.blue = result.blue - 1;
 	}
-	
+
 	return result;
 }
 
