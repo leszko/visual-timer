@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<div> 
+		<p id="demo"></p>
+	</div>
+	<div>
+		<button onclick="restart()">Restart</button>
+		<input type="number" id="minutes" value="0.1">
+	</div>
+
+<canvas id="canvas" width="400" height="400"
+style="background-color:#28c1bb">
+</canvas>
+
+<script>
+resizeFullScreen();
+
+var fullCircle = 1;
+
+var canvas = document.getElementById("canvas");
+var context = canvas.getContext("2d");
+var halfSize = canvas.height / 2;
+context.translate(halfSize, halfSize);
+radius = halfSize * 0.90;
+var startTime =  new Date().getTime() / 1000;
+var limitInSeconds = 10;
+
+var angle = 0.1
+restart();
+
+var	blue = "#28c1bb";
+var white = "#ffffff";
+var orange = "#E89E0C";
+var red = "#FF0000";
+
+var previousColor = white;
+var color = white;
+
+var gradientLastChange = 0.0;
+
+function restart() {
+	clearCanvas();
+
+	startTime =  new Date().getTime() / 1000;
+	gradientLastChange = 0.0;
+	limitInSeconds = document.getElementById("minutes").value * 60;
+	window.requestAnimationFrame(drawClock);
+}
+
+function clearCanvas() {
+	previousColor = white;
+	color = white;
+	context.translate(-halfSize, -halfSize);
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	context.translate(halfSize, halfSize);
+}
+
+function drawClock() {
+	//drawBackground();
+	drawProgress();
+
+	refresh();
+}
+
+function refresh() {
+	window.requestAnimationFrame(drawClock);
+}
+
+function drawProgress() {
+	var currentTime = new Date().getTime() / 1000;
+	var elapsedSeconds = (currentTime - startTime);
+	var progress = elapsedSeconds / limitInSeconds;
+
+	previousColor = color;
+	color = applyGradient(previousColor, toColor(progress), elapsedSeconds);
+
+
+	drawCircle(radius, progress, color);
+	// drawLine(radius, progress, elapsedSeconds, "grey");
+
+	// document.getElementById("demo").innerHTML = elapsedSeconds.toFixed(1);
+}
+
+function applyGradient(previousColor, currentColor, elapsedSeconds) {
+	if (previousColor == currentColor) {
+		return previousColor;
+	}
+	if (elapsedSeconds - gradientLastChange < 0.001) {
+		return previousColor;
+	}
+
+	gradientLastChange = elapsedSeconds;
+	var previousRgb = parseColor(previousColor);
+	var colorRgb = parseColor(currentColor);
+
+	var resultRgb = previousRgb.slice();
+
+	result = previousRgb[0] - 1;
+
+	for (i = 0; i < 3; i++) {
+		if (colorRgb[i] < previousRgb[i]) {
+			resultRgb[i] = Math.max(previousRgb[i] - 5, 0);
+		} else if (colorRgb[i] > previousRgb[i]) {
+			resultRgb[i] = Math.min(previousRgb[i] + 5, 255);
+		}
+	}
+
+	var res = "#" + toHexString(resultRgb[0]) + toHexString(resultRgb[1]) + toHexString(resultRgb[2]);
+
+	debug(resultRgb);
+
+	return res;
+}
+
+function toHexString(intValue) {
+	return ("0" + intValue.toString(16)).slice(-2);
+}
+
+function debug(text) {
+	document.getElementById("demo").innerHTML = text;
+}
+
+function toColor(progress) {
+	if (progress < 0.5) {
+		return white;
+	}
+	if (progress < 0.8) {
+		return orange;
+	}
+	return red;
+}
+
+function drawCircle(radius, progress, color) {
+	context.lineWidth = 1;
+	context.fillStyle = color;
+	context.strokeStyle = color;
+	context.beginPath();
+    context.moveTo(0,0);
+	context.arc(0, 0, radius, -0.5 * Math.PI, toAngle(progress));
+	context.stroke();
+	context.fill();
+	context.closePath();
+}
+
+function toAngle(progress) {
+	return (2 * progress - 0.5) * Math.PI;
+}
+
+function resizeFullScreen() {
+	var canvas = document.getElementById("canvas");
+	canvas.width  = window.innerWidth - 100;
+	canvas.height = window.innerHeight - 100;
+}
+
+function drawBackground() {
+	drawCircle(radius, fullCircle, "white");
+	drawCircle(radius - 5, fullCircle, blue);
+}
+
+function drawLine(radius, progress, elapsedSeconds, color) {
+	var angle = toAngle(progress);
+	var y = radius * Math.sin(angle);
+	var x = radius * Math.cos(angle);
+
+	var transparency = Math.abs((elapsedSeconds % 1) - 0.5);
+	var currentColor = "rgba(0, 0, 0, " + transparency + ")";
+
+	context.lineWidth = 3;
+	context.strokeStyle = currentColor;
+	context.beginPath();
+	context.moveTo(0,0);
+	context.lineTo(x, y);
+	context.stroke();
+	context.closePath();
+}
+
+function parseColor(color) {
+	var m = color.match(/^#([0-9a-f]{6})$/i)[1];
+    if( m) {
+        return [
+            parseInt(m.substr(0,2),16),
+            parseInt(m.substr(2,2),16),
+            parseInt(m.substr(4,2),16)
+        ];
+    }
+}
+
+</script>
+
+</body>
+</html>
