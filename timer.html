@@ -57,7 +57,6 @@ function clearCanvas() {
 }
 
 function drawClock() {
-	//drawBackground();
 	drawProgress();
 
 	refresh();
@@ -77,9 +76,7 @@ function drawProgress() {
 
 
 	drawCircle(radius, progress, color);
-	// drawLine(radius, progress, elapsedSeconds, "grey");
-
-	// document.getElementById("demo").innerHTML = elapsedSeconds.toFixed(1);
+	document.getElementById("demo").innerHTML = elapsedSeconds.toFixed(1);
 }
 
 function applyGradient(previousColor, currentColor, elapsedSeconds) {
@@ -151,28 +148,6 @@ function resizeFullScreen() {
 	var canvas = document.getElementById("canvas");
 	canvas.width  = window.innerWidth - 100;
 	canvas.height = window.innerHeight - 100;
-}
-
-function drawBackground() {
-	drawCircle(radius, fullCircle, "white");
-	drawCircle(radius - 5, fullCircle, blue);
-}
-
-function drawLine(radius, progress, elapsedSeconds, color) {
-	var angle = toAngle(progress);
-	var y = radius * Math.sin(angle);
-	var x = radius * Math.cos(angle);
-
-	var transparency = Math.abs((elapsedSeconds % 1) - 0.5);
-	var currentColor = "rgba(0, 0, 0, " + transparency + ")";
-
-	context.lineWidth = 3;
-	context.strokeStyle = currentColor;
-	context.beginPath();
-	context.moveTo(0,0);
-	context.lineTo(x, y);
-	context.stroke();
-	context.closePath();
 }
 
 function parseColor(color) {
