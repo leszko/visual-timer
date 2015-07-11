@@ -13,6 +13,8 @@
 style="background-color:#28c1bb">
 </canvas>
 
+<script type="text/javascript" src="rgbcolor.js"></script>
+
 <script>
 resizeFullScreen();
 
@@ -76,6 +78,10 @@ function drawProgress() {
 
 
 	drawCircle(radius, progress, color);
+
+	c = new RgbColor("#123456");
+	document.getElementById("demo").innerHTML = c.toString();
+
 	document.getElementById("demo").innerHTML = elapsedSeconds.toFixed(1);
 }
 
@@ -88,30 +94,13 @@ function applyGradient(previousColor, currentColor, elapsedSeconds) {
 	}
 
 	gradientLastChange = elapsedSeconds;
-	var previousRgb = parseColor(previousColor);
-	var colorRgb = parseColor(currentColor);
 
-	var resultRgb = previousRgb.slice();
+	var previousRgb = new RgbColor(previousColor);
+	var currentRgb = new RgbColor(currentColor);
 
-	result = previousRgb[0] - 1;
+	previousRgb.applyGradientFrom(currentRgb);
 
-	for (i = 0; i < 3; i++) {
-		if (colorRgb[i] < previousRgb[i]) {
-			resultRgb[i] = Math.max(previousRgb[i] - 5, 0);
-		} else if (colorRgb[i] > previousRgb[i]) {
-			resultRgb[i] = Math.min(previousRgb[i] + 5, 255);
-		}
-	}
-
-	var res = "#" + toHexString(resultRgb[0]) + toHexString(resultRgb[1]) + toHexString(resultRgb[2]);
-
-	debug(resultRgb);
-
-	return res;
-}
-
-function toHexString(intValue) {
-	return ("0" + intValue.toString(16)).slice(-2);
+	return previousRgb.toString();
 }
 
 function debug(text) {
@@ -148,17 +137,6 @@ function resizeFullScreen() {
 	var canvas = document.getElementById("canvas");
 	canvas.width  = window.innerWidth - 100;
 	canvas.height = window.innerHeight - 100;
-}
-
-function parseColor(color) {
-	var m = color.match(/^#([0-9a-f]{6})$/i)[1];
-    if( m) {
-        return [
-            parseInt(m.substr(0,2),16),
-            parseInt(m.substr(2,2),16),
-            parseInt(m.substr(4,2),16)
-        ];
-    }
 }
 
 </script>
