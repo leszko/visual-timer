@@ -13,7 +13,7 @@ Timer.prototype.start = function(periodInSeconds) {
 	this.period = periodInSeconds;
 	this.startTime = this.now();
 	this.colorProvider = new ColorProvider();
-	
+
 	this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
 	window.requestAnimationFrame(this.drawTimer.bind(this));
@@ -26,7 +26,9 @@ Timer.prototype.drawTimer = function() {
 
 	this.drawProgress(progress);
 
-	window.requestAnimationFrame(this.drawTimer.bind(this));
+	if (!this.finished(progress)) {
+		window.requestAnimationFrame(this.drawTimer.bind(this));
+	}
 }
 
 Timer.prototype.drawProgress = function(progress) {
@@ -52,6 +54,10 @@ Timer.prototype.drawCircle = function(progress, color) {
 	this.context.closePath();
 
 	this.context.translate(-halfSize, -halfSize);
+}
+
+Timer.prototype.finished = function(progress) {
+	return progress > 1 && this.colorProvider.recentColor.equals(this.RED);
 }
 
 Timer.prototype.now = function() {
