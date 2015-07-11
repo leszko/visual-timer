@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<body>
+<body onresize="resizeFullScreen()">
 	<div> 
 		<p id="demo"></p>
 	</div>
@@ -32,6 +32,9 @@ function resizeFullScreen() {
 	var canvas = document.getElementById("canvas");
 	canvas.width  = window.innerWidth - 100;
 	canvas.height = window.innerHeight - 100;
+	if (timer) {
+		timer.refreshSize();
+	}
 }
 
 </script>
