@@ -65,10 +65,10 @@ Timer.prototype.now = function() {
 }
 
 function ColorProvider() {
-	this.BLUE = "#28c1bb";
+	this.BLUE = "#226666";
 	this.WHITE = "#ffffff";
-	this.ORANGE = "#E89E0C";
-	this.RED = "#FF0000";
+	this.ORANGE = "#f05b47";
+	this.RED = "#ed1c24";
 
 	this.recentProgress = 0;
 	this.recentColor = new RgbColor(this.WHITE);
