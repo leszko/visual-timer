@@ -5,8 +5,7 @@ function Timer(canvas) {
 }
 
 Timer.prototype.refreshSize = function() {
-	var halfSize = canvas.height / 2;
-	this.radius = halfSize * 0.9;
+	this.radius = this.halfSize(canvas) * 0.9;
 }
 
 Timer.prototype.start = function(periodInSeconds) {
@@ -40,8 +39,8 @@ Timer.prototype.drawCircle = function(progress, color) {
 		return (2 * progress - 0.5) * Math.PI;
 	}
 
-	var halfSize = this.canvas.height / 2;
-	this.context.translate(halfSize, halfSize);
+	var halfSize = this.halfSize(this.canvas);
+	this.context.translate(this.canvas.width / 2, this.canvas.height / 2);
 
 	this.context.lineWidth = 1;
 	this.context.fillStyle = color;
@@ -53,7 +52,7 @@ Timer.prototype.drawCircle = function(progress, color) {
 	this.context.fill();
 	this.context.closePath();
 
-	this.context.translate(-halfSize, -halfSize);
+	this.context.translate(-this.canvas.width / 2, -this.canvas.height / 2);
 }
 
 Timer.prototype.finished = function(progress) {
@@ -62,6 +61,10 @@ Timer.prototype.finished = function(progress) {
 
 Timer.prototype.now = function() {
 	return (new Date().getTime()) / 1000;
+}
+
+Timer.prototype.halfSize = function(canvas) {
+	return Math.min(canvas.height, canvas.width) / 2;
 }
 
 function ColorProvider() {
