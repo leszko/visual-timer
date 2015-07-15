@@ -51,7 +51,7 @@ Timer.prototype.drawCircle = function(angle, radius, color) {
 	var halfSize = this.halfSize(this.canvas);
 	this.context.translate(this.canvas.width / 2, this.canvas.height / 2);
 
-	this.context.lineWidth = 1;
+	this.context.lineWidth = 0;
 	this.context.fillStyle = color;
 	this.context.strokeStyle = color;
 	this.context.beginPath();
