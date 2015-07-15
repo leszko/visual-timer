@@ -5,7 +5,7 @@ function Timer(canvas) {
 }
 
 Timer.prototype.refreshSize = function() {
-	this.radius = this.halfSize(canvas) * 0.9;
+	this.radius = this.halfSize(canvas) * 0.8;
 }
 
 Timer.prototype.start = function(periodInSeconds) {
@@ -31,14 +31,23 @@ Timer.prototype.drawTimer = function() {
 }
 
 Timer.prototype.drawProgress = function(progress) {
-	this.drawCircle(progress, this.colorProvider.colorFor(progress));
+	this.drawProgressCircle(progress);
+	this.drawMiddleCircle();
 }
 
-Timer.prototype.drawCircle = function(progress, color) {
+Timer.prototype.drawProgressCircle = function(progress) {
 	function toAngle(progress) {
 		return (2 * progress - 0.5) * Math.PI;
 	}
 
+	this.drawCircle(toAngle(progress), this.radius, this.colorProvider.colorFor(progress));
+}
+
+Timer.prototype.drawMiddleCircle = function(color) {
+	this.drawCircle(2 * Math.PI, 0.85 * this.radius, this.colorProvider.background());
+}
+
+Timer.prototype.drawCircle = function(angle, radius, color) {
 	var halfSize = this.halfSize(this.canvas);
 	this.context.translate(this.canvas.width / 2, this.canvas.height / 2);
 
@@ -47,7 +56,7 @@ Timer.prototype.drawCircle = function(progress, color) {
 	this.context.strokeStyle = color;
 	this.context.beginPath();
     this.context.moveTo(0,0);
-	this.context.arc(0, 0, this.radius, -0.5 * Math.PI, toAngle(progress));
+	this.context.arc(0, 0, radius, -0.5 * Math.PI, angle);
 	this.context.stroke();
 	this.context.fill();
 	this.context.closePath();
@@ -56,7 +65,7 @@ Timer.prototype.drawCircle = function(progress, color) {
 }
 
 Timer.prototype.finished = function(progress) {
-	return progress > 1 && this.colorProvider.recentColor.equals(this.RED);
+	return progress > 1 && this.colorProvider.recentColor.equals(this.FULL);
 }
 
 Timer.prototype.now = function() {
@@ -68,23 +77,27 @@ Timer.prototype.halfSize = function(canvas) {
 }
 
 function ColorProvider() {
-	this.BLUE = "#226666";
-	this.WHITE = "#ffffff";
-	this.ORANGE = "#f05b47";
-	this.RED = "#ed1c24";
+	this.BLACKGROUND = "#101046";
+	this.ZERO = "#FFFFFF";
+	this.HALF = "#66CCCC";
+	this.FULL = "#3399CC";
 
 	this.recentProgress = 0;
-	this.recentColor = new RgbColor(this.WHITE);
+	this.recentColor = new RgbColor(this.ZERO);
+}
+
+ColorProvider.prototype.background = function() {
+	return this.BLACKGROUND;
 }
 
 ColorProvider.prototype.baseColorFor = function(progress) {
 	if (progress < 0.5) {
-		return new RgbColor(this.WHITE);
+		return new RgbColor(this.ZERO);
 	}
 	if (progress < 0.8) {
-		return new RgbColor(this.ORANGE);
+		return new RgbColor(this.HALF);
 	}
-	return new RgbColor(this.RED);
+	return new RgbColor(this.FULL);
 }
 
 ColorProvider.prototype.gradientTowards = function(color, progress) {
